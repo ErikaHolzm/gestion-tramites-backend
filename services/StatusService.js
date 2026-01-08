@@ -8,7 +8,13 @@ class StatusService {
     }
 
     async getStatusById(id) {
-        return await Status.findById(id);
+        const status = await Status.findById(id);
+
+        if (!status) {
+            throw new Error(`El Status con id ${id} no existe`);
+        }
+
+        return status;
     }
 
     async createNewStatus(name, description) {
@@ -17,11 +23,23 @@ class StatusService {
             description: description
         })
 
+        if (!newStatus) {
+            throw Error("No se ha podido crear el Status. Compruebe los datos.")
+        }
+
         return await newStatus.save();
     }
 
     async updateStatusById(statusId, name, description) {
+        const updateData = {name: name, description: description};
 
+        const status = await Status.findByIdAndUpdate({_id: statusId}, updateData);
+
+        if (!status) {
+            throw Error(`No se ha podido actualizar el status con id ${statusId}`);
+        }
+
+        return await Status.findById(statusId);
     }
 
     async deleteStatusById(statusId) {

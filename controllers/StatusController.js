@@ -7,17 +7,31 @@ class StatusController {
         return StatusService.getAllStatus();
     }
 
-    async getStatusById(data) {
-        return StatusService.getStatusById(data.id);
+    async getStatusById(id) {
+        try {
+            return await StatusService.getStatusById(id);
+        } catch(error) {
+            throw error;
+        }
     }
 
     async createNewStatus(data) {
-        const {name, description} = data;
-        return StatusService.createNewStatus(name, description);
+        try {
+            const {name, description} = data;
+            return StatusService.createNewStatus(name, description);
+        } catch (error) {
+            throw error;
+        }
+
     }
 
     async updateStatusById(data) {
-        return null;
+        try {
+            const {id, name, description} = data;
+            return await StatusService.updateStatusById(id, name, description);
+        } catch (error) {
+            throw error;
+        }
     }
 
     async deleteStatusById(id) {
@@ -26,7 +40,6 @@ class StatusController {
         } catch (error) {
             throw error;
         }
-        
     }
 }
 
