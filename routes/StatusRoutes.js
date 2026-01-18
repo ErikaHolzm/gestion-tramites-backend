@@ -17,7 +17,6 @@ router.post('/', async (req, res) => {
     console.error(`No se ha podido crear el status con data: ${JSON.stringify(req.body)}`);
     res.status(409).json({ error: error.message });
   }
-
 });
 
 // Obtener un Status por ID
