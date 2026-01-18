@@ -19,12 +19,12 @@ const reminderSchema = new mongoose.Schema(
     },
     
     user: {
-        type: Schema.ObjectId,
+        type: mongoose.Schema.ObjectId,
         ref: 'Users'
     },
     
     status: {
-        type: Schema.ObjectId,
+        type: mongoose.Schema.ObjectId,
         ref: 'Status'
     }
   },

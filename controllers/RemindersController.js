@@ -2,48 +2,42 @@ import RemindersService from '../services/RemindersService.js';
 
 class RemindersController {
 
-    async getAllReminders(req, res) {
+    async getAllReminders() {
+        return await RemindersService.getAll();
+    }
+
+    async getReminderById(id) {
         try {
-            const reminders = await RemindersService.getAll();
-            res.json(reminders);
+            return await RemindersService.getById(id);
         } catch (error) {
-            res.status(500).json({ message: error.message });
+            throw error;
         }
     }
 
-    async getReminderById(req, res) {
+    async createNewReminder(data) {
         try {
-            const reminder = await RemindersService.getById(req.params.id);
-            res.json(reminder);
+            const {title, description, date, status, user} = data;
+            // TODO: Validar status y user existen
+            return await RemindersService.createNewReminder(title, description, date, status, user);
         } catch (error) {
-            res.status(404).json({ message: error.message });
+            throw error;
         }
     }
 
-    async createNewReminder(req, res) {
+    async updateReminderById(data) {
         try {
-            const reminder = await RemindersService.create(req.body);
-            res.status(201).json(reminder);
+            const {id, title, description, date} = data;
+            return await RemindersService.updateReminderById(id, title, description, date);
         } catch (error) {
-            res.status(400).json({ message: error.message });
+            throw error;
         }
     }
 
-    async updateReminderById(req, res) {
+    async deleteReminderById(id) {
         try {
-            const reminder = await RemindersService.update(req.params.id, req.body);
-            res.json(reminder);
+            return await RemindersService.deleteReminderById(id);
         } catch (error) {
-            res.status(400).json({ message: error.message });
-        }
-    }
-
-    async deleteReminderById(req, res) {
-        try {
-            const deleted = await RemindersService.delete(req.params.id);
-            res.json({ message: "Reminder eliminado", deleted });
-        } catch (error) {
-            res.status(404).json({ message: error.message });
+            throw error;
         }
     }
 }

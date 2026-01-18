@@ -18,14 +18,12 @@ class RemindersService {
     return reminder;
   }
 
-  async create(data) {
-    const { title, description, date, status, user } = data;
+  async createNewReminder(title, description, date, status, user) {
 
     if (!title || !description || !date || !status || !user) {
       throw new Error("title, description, date, status y user son obligatorios");
     }
 
-    console.log('AQUI LLEGA');
     const created = await Reminders.create({
       title: title.trim(),
       description: description.trim(),
@@ -37,12 +35,12 @@ class RemindersService {
     return await this.getById(created._id);
   }
 
-  async update(id, data) {
-   
-    if (typeof data.title === "string") data.title = data.title.trim();
-    if (typeof data.description === "string") data.description = data.description.trim();
+  async updateReminderById(id, title, description, date) {
 
-    const updated = await Reminders.findByIdAndUpdate(id, data, { new: true })
+    if (typeof title === "string") title = title.trim();
+    if (typeof description === "string") description = description.trim();
+
+    const updated = await Reminders.findByIdAndUpdate(id, { title, description, date }, { new: false })
       .populate("status")
       .populate("user", "-password");
 
@@ -55,6 +53,17 @@ class RemindersService {
     if (!deleted) throw new Error("Reminders no encontrado");
     return deleted;
   }
+
+  async deleteReminderById(id) {
+      const deleted = await Reminders.findByIdAndDelete(id);
+
+      if (!deleted) {
+          throw new Error("El Reminder no existe o ya fue eliminado");
+      }
+
+      return deleted;
+  }
+
 }
 
 export default new RemindersService();
