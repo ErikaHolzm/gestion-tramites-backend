@@ -2,12 +2,12 @@
 import Users from '../models/Users.js';
 class UsersService {
 
-      async getAllUsers() {
+    async getAllUsers() {
         return await Users.find().select("-password");
-      }
-  
-      async getUserById(id) {
-          return await Users.findById(id).select("-password");
+    }
+
+    async getUserById(id) {
+        return await Users.findById(id).select("-password");
     }
   
     async createNewUser(userData) {
@@ -29,15 +29,13 @@ class UsersService {
         return user;
     }
 
-      async deleteUserById(userId) {
+    async deleteUserById(userId) {
         const deleted = await Users.deleteOne({ _id: userId });
-  
-          if (!deleted) {
-              throw new Error("El User no existe o ya fue eliminado");
-          }
-  
-          return deleted;
-      }
+
+        if (!deleted) throw new Error("El User no existe o ya fue eliminado");
+
+        return deleted;
+    }
 }
 
 export default new UsersService();
