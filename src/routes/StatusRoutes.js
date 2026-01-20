@@ -1,5 +1,8 @@
 import express from 'express';
 import StatusController from '../controllers/StatusController.js'
+import { validateStatus } from '../middlewares/StatusMiddlewares.js';
+import { validateRequired } from '../middlewares/ValidateBody.js';
+
 const router = express.Router();
 
 // Obtención de todos los status
@@ -9,7 +12,7 @@ router.get('/', async (req, res) => {
 });
 
 // Crear nuevo status
-router.post('/', async (req, res) => {
+router.post('/', validateRequired(["name", "description"]), validateStatus, async (req, res) => {
   try {
     const newStatus = await StatusController.createNewStatus(req.body);  
     res.json({response: `Status creado con name: ${newStatus.name}`});
@@ -32,7 +35,7 @@ router.get('/:id', async (req, res) => {
 
 
 // Actualizar Status por ID
-router.put('/', async (req, res) => {
+router.put('/', validateStatus, async (req, res) => {
   try {
     const status = await StatusController.updateStatusById(req.body);
     res.json({ response: 'Status actualizado correctamente', status });

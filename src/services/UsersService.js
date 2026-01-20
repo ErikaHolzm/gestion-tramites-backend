@@ -7,14 +7,8 @@ class UsersService {
       }
   
       async getUserById(id) {
-          const user = await Users.findById(id).select("-password");
-  
-          if (!user) {
-              throw new Error(`El User con id ${id} no existe`);
-          }
-  
-          return user;
-      }
+          return await Users.findById(id).select("-password");
+    }
   
       async createNewUser(name, surname, email, password, number) {
           const newUser = await Users.create({
