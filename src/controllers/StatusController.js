@@ -3,42 +3,49 @@ import StatusService from '../services/StatusService.js';
 
 class StatusController {
 
-    async getAllStatus() {
-        return StatusService.getAllStatus();
+    async getAllStatus(req, res) {
+        try {
+            const status = await StatusService.getAllStatus();
+            res.status(200).json(status);
+        } catch (error) {
+            res.status(500).json({ error: error.message });
+        }
     }
 
-    async getStatusById(id) {
+    async getStatusById(req, res) {
         try {
-            return await StatusService.getStatusById(id);
+            const status = await StatusService.getStatusById(req.params.id);
+            res.status(200).json(status);
         } catch(error) {
-            throw error;
+            res.status(500).json({ error: error.message });
         }
     }
 
-    async createNewStatus(data) {
+    async createNewStatus(req, res) {
         try {
-            const {name, description} = data;
-            return StatusService.createNewStatus(name, description);
+            const newStatus = await StatusService.createNewStatus(req.body);
+            res.status(201).json(newStatus);
         } catch (error) {
-            throw error;
+            res.status(500).json({ error: error.message });
         }
 
     }
 
-    async updateStatusById(data) {
+    async updateStatusById(req, res) {
         try {
-            const {id, name, description} = data;
-            return await StatusService.updateStatusById(id, name, description);
+            const updatedStatus = await StatusService.updateStatusById(req.params.id, req.body);
+            res.json({ message: 'Actualizado', status: updatedStatus });
         } catch (error) {
-            throw error;
+            res.status(500).json({ error: error.message });
         }
     }
 
-    async deleteStatusById(id) {
+    async deleteStatusById(req, res) {
         try {
-            return await StatusService.deleteStatusById(id);
+            await StatusService.deleteStatusById(req.params.id);
+            res.json({ message: 'Eliminado correctamente' });
         } catch (error) {
-            throw error;
+            res.status(500).json({ error: error.message });
         }
     }
 }

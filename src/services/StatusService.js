@@ -17,37 +17,29 @@ class StatusService {
         return status;
     }
 
-    async createNewStatus(name, description) {
-        const newStatus = await Status.create({
-            name: name,
-            description: description
-        })
+    async createNewStatus(statusData) {
+        const newStatus = await Status.create(statusData)
 
-        if (!newStatus) {
-            throw Error("No se ha podido crear el Status. Compruebe los datos.")
-        }
+        if (!newStatus) throw Error("No se ha podido crear el Status. Compruebe los datos.")
 
         return await newStatus.save();
     }
 
-    async updateStatusById(statusId, name, description) {
-        const updateData = {name: name, description: description};
+    async updateStatusById(statusId, statusData) {
+        const status = await Status.findByIdAndUpdate(
+            statusId,
+            { $set: statusData},
+            { new: true, runValidators: true }
+        );
 
-        const status = await Status.findByIdAndUpdate({_id: statusId}, updateData);
-
-        if (!status) {
-            throw Error(`No se ha podido actualizar el status con id ${statusId}`);
-        }
-
-        return await Status.findById(statusId);
+        if (!status) throw Error(`No se ha podido actualizar el status con id ${statusId}`);
+        return status;
     }
 
     async deleteStatusById(statusId) {
-        const deleted = await Status.findByIdAndDelete(statusId);
+        const deleted = await Status.deleteOne({ _id: statusId });
 
-        if (!deleted) {
-            throw new Error("El Status no existe o ya fue eliminado");
-        }
+        if (!deleted) throw new Error("El Status no existe o ya fue eliminado");
 
         return deleted;
     }

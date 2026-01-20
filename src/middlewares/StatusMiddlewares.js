@@ -19,12 +19,12 @@ export function validateStatus(req, res, next) {
 
     // Si se proporciona el campo name, validar su valor
     if (name) {
-    if (!VALID_STATUSES.includes(name)) {
-        return res.status(400).json({
-        message: "Status inválido",
-        validStatuses: VALID_STATUSES,
-        });
-    }
+        if (!VALID_STATUSES.includes(name)) {
+            return res.status(400).json({
+                message: "Status inválido",
+                validStatuses: VALID_STATUSES,
+            });
+        }
     }
 
     // Si se proporciona el campo description, validar su valor
