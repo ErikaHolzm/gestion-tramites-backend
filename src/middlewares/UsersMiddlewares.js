@@ -1,4 +1,4 @@
-import UsersController from "../controllers/UsersController.js";
+import UsersService from "../services/UsersService.js";
 
 /**
  * Valida campos requeridos para crear un usuario (POST)
@@ -100,8 +100,8 @@ export function validateUserUpdate(req, res, next) {
  */
 export async function userExists(req, res, next) {
     try {
-        // Soporta id tanto de params como de body
-        const id = req.params.id || req.body.id;
+        // obtener ID de los parámetros de la solicitud
+        const id = req.params.id;
 
         if (!id) {
             return res.status(400).json({
@@ -109,7 +109,7 @@ export async function userExists(req, res, next) {
             });
         }
 
-        const user = await UsersController.getUserById(id);
+        const user = await UsersService.getUserById(id);
 
         if (!user) {
             return res.status(404).json({

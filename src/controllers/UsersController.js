@@ -3,42 +3,45 @@ import UsersService from '../services/UsersService.js';
 
 class UsersController {
 
-    async getAllUsers() {
-        return UsersService.getAllUsers();
-    }
-
-    async getUserById(id) {
+    async getAllUsers(req, res) {
         try {
-            return await UsersService.getUserById(id);
-        } catch(error) {
-            throw error;
+            const users = await UsersService.getAllUsers();
+            res.status(200).json(users);
+        } catch (error) {
+            res.status(500).json({ error: error.message });
         }
     }
 
-    async createNewUser(data) {
+    async getUserProfile(req, res) {
+        return res.status(200).json(req.user);
+    }
+
+    async createNewUser(req, res) {
         try {
-            const {name, surname, email, password, number} = data;
-            return UsersService.createNewUser(name, surname, email, password, number);
+            const createdUser = await UsersService.createNewUser(req.body);
+            res.status(201).json(createdUser);
         } catch (error) {
-            throw error;
+            res.status(400).json({ error: error.message });
         }
 
     }
 
-    async updateUserById(data) {
+    async updateUserById(req, res) {
         try {
-            const {id, name, surname, email, password, number} = data;
-            return await UsersService.updateUserById(id, name, surname, email, password, number);
+            // El ID viene de params, los datos del body
+            const updatedUser = await UsersService.updateUserById(req.params.id, req.body);
+            res.json({ message: 'Actualizado', user: updatedUser });
         } catch (error) {
-            throw error;
+            res.status(400).json({ error: error.message });
         }
     }
 
-    async deleteUserById(id) {
+    async deleteUserById(req, res) {
         try {
-            return await UsersService.deleteUserById(id);
+            await UsersService.deleteUserById(req.params.id);
+            res.json({ message: 'Eliminado correctamente' });
         } catch (error) {
-            throw error;
+            res.status(500).json({ error: error.message });
         }
     }
 }

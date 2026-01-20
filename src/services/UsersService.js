@@ -10,42 +10,27 @@ class UsersService {
           return await Users.findById(id).select("-password");
     }
   
-      async createNewUser(name, surname, email, password, number) {
-          const newUser = await Users.create({
-              name: name,
-              surname: surname,
-              email: email,
-              password: password,
-              number: number
-          })
+    async createNewUser(userData) {
+        const newUser = await Users.create(userData);
+
+        if (!newUser) throw Error("No se ha podido crear el User. Compruebe los datos.")
+
+        return await newUser.save();
+    }
   
-          if (!newUser) {
-              throw Error("No se ha podido crear el User. Compruebe los datos.")
-          }
-  
-          return await newUser.save();
-      }
-  
-      async updateUserById(userId, name, surname, email, password, number) {
-          const updateData = {
-              name: name,
-              surname: surname,
-              email: email,
-              password: password,
-              number: number
-          };
-  
-          const user = await Users.findByIdAndUpdate({_id: userId}, updateData);
-  
-          if (!user) {
-              throw Error(`No se ha podido actualizar el user con id ${userId}`);
-          }
-  
-          return await Users.findById(userId);
-      }
-  
+    async updateUserById(userId, updateData) {
+        const user = await Users.findByIdAndUpdate(
+            userId, 
+            { $set: updateData }, 
+            { new: true, runValidators: true } // new: true devuelve el usuario ya actualizado
+        ).select("-password");
+
+        if (!user) throw new Error("No se pudo actualizar");
+        return user;
+    }
+
       async deleteUserById(userId) {
-          const deleted = await Users.findByIdAndDelete(userId);
+        const deleted = await Users.deleteOne({ _id: userId });
   
           if (!deleted) {
               throw new Error("El User no existe o ya fue eliminado");
