@@ -2,42 +2,43 @@ import RemindersService from '../services/RemindersService.js';
 
 class RemindersController {
 
-    async getAllReminders() {
-        return await RemindersService.getAll();
-    }
-
-    async getReminderById(id) {
+    async getAllReminders(req, res) {
         try {
-            return await RemindersService.getById(id);
-        } catch (error) {
-            throw error;
+            const reminders = await RemindersService.getAll();
+            res.status(200).json(reminders);
+        } catch(error) {
+            res.status(500).json({ error: error.message });
         }
     }
 
-    async createNewReminder(data) {
+    async getReminder(req, res) {
+        return res.status(200).json(req.reminder);
+    }
+
+    async createNewReminder(req, res) {
         try {
-            const {title, description, date, status, user} = data;
-            // TODO: Validar status y user existen
-            return await RemindersService.createNewReminder(title, description, date, status, user);
+            const createdReminder = await RemindersService.createNewReminder(req.body);
+            res.status(201).json(createdReminder);
         } catch (error) {
-            throw error;
+            res.status(400).json({ error: error.message});
         }
     }
 
-    async updateReminderById(data) {
+    async updateReminderById(req, res) {
         try {
-            const {id, title, description, date} = data;
-            return await RemindersService.updateReminderById(id, title, description, date);
+            const updatedReminder = await RemindersService.updateReminderById(req.params.id, req.body);
+            res.status(201).json(updatedReminder);
         } catch (error) {
-            throw error;
+            res.status(400).json({ error: error.message});
         }
     }
 
-    async deleteReminderById(id) {
+    async deleteReminderById(req, res) {
         try {
-            return await RemindersService.deleteReminderById(id);
+            await RemindersService.deleteReminderById(req.params.id);
+            res.json({ message: 'Eliminado correctamente'});
         } catch (error) {
-            throw error;
+            res.status(500).json({ error: error.message });
         }
     }
 }

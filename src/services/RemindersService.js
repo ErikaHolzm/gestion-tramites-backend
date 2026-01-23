@@ -18,52 +18,33 @@ class RemindersService {
     return reminder;
   }
 
-  async createNewReminder(title, description, date, status, user) {
+  async createNewReminder(reminderData) {
+    const newReminder = await Reminders.create(reminderData);
 
-    if (!title || !description || !date || !status || !user) {
-      throw new Error("title, description, date, status y user son obligatorios");
-    }
+    if (!newReminder) throw Error("No se ha podido crear el Recordatorio. Compruebe los datos.")
 
-    const created = await Reminders.create({
-      title: title.trim(),
-      description: description.trim(),
-      date,
-      status,
-      user,
-    });
-
-    return await this.getById(created._id);
+    return await newReminder.save();
   }
 
-  async updateReminderById(id, title, description, date) {
-
-    if (typeof title === "string") title = title.trim();
-    if (typeof description === "string") description = description.trim();
-
-    const updated = await Reminders.findByIdAndUpdate(id, { title, description, date }, { new: false })
+  async updateReminderById(reminderId, reminderData) {
+    const reminder = await Reminders.findByIdAndUpdate(
+      reminderId, 
+      { $set: reminderData},
+      { new: true, runValidators: true})
       .populate("status")
       .populate("user", "-password");
 
-    if (!updated) throw new Error("Reminders no encontrado");
-    return updated;
+    if (!reminder) throw new Error("No se pudo actualizar el recordatorio.");
+    return reminder;
   }
 
-  async delete(id) {
-    const deleted = await Reminders.findByIdAndDelete(id);
-    if (!deleted) throw new Error("Reminders no encontrado");
+  async deleteReminderById(reminderId) {
+    const deleted = await Reminders.deleteOne({ _id: reminderId });
+    
+    if (!deleted) throw new Error("El Recordatorio no existe o ya fue eliminado");
+    
     return deleted;
   }
-
-  async deleteReminderById(id) {
-      const deleted = await Reminders.findByIdAndDelete(id);
-
-      if (!deleted) {
-          throw new Error("El Reminder no existe o ya fue eliminado");
-      }
-
-      return deleted;
-  }
-
 }
 
 export default new RemindersService();

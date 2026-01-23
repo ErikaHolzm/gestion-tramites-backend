@@ -25,7 +25,7 @@ class UsersService {
             { new: true, runValidators: true } // new: true devuelve el usuario ya actualizado
         ).select("-password");
 
-        if (!user) throw new Error("No se pudo actualizar");
+        if (!user) throw new Error("No se pudo actualizar el usuario");
         return user;
     }
 
