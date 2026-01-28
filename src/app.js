@@ -5,6 +5,7 @@ import connectDB from "./config/db.js";
 import StatusRoutes from "./routes/StatusRoutes.js";
 import UsersRoutes from "./routes/UsersRoutes.js";
 import RemindersRoutes from "./routes/RemindersRoutes.js"
+import AuthRoutes from "./routes/AuthRoutes.js";
 
 dotenv.config();
 
@@ -21,10 +22,12 @@ app.use("/status", StatusRoutes);
 app.use("/users", UsersRoutes);
 // Usar rutas de reminders
 app.use("/reminders", RemindersRoutes);
+// Usar rutas de auth
+app.use("/auth", AuthRoutes);
 
 // Ping
 app.get("/", (req, res) => {
-  res.send("API OK ");
+  res.send("API OK");
 });
 
 // Definir puerto
