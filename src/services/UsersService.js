@@ -1,5 +1,7 @@
 // Service Users
 import Users from '../models/Users.js';
+import bcrypt from 'bcrypt';
+
 class UsersService {
 
     async getAllUsers() {
@@ -38,14 +40,20 @@ class UsersService {
     }
 
     async loginUser(loginData) {
-        const user = await Users.findOne({ email: loginData.email, password: loginData.password }).select("-password");
+        const user = await Users.findOne({ email: loginData.email });
 
-        if (!user) throw new Error("Credenciales inválidas");
+        const isValid = await bcrypt.compare(loginData.password, user.password);
 
-        return user;
+        if (!user || !isValid) throw new Error("Credenciales inválidas");
+
+        const { password, ...userWithoutPassword } = user.toObject();
+        return userWithoutPassword;
     }
 
     async registerUser(userData) {
+        // Encriptar la contraseña antes de guardar
+        userData.password = await bcrypt.hash(userData.password, 10);
+
         // Verificar si el email o number ya está registrado
         const existingUser = await Users.findOne({ 
             $or: [
@@ -62,7 +70,7 @@ class UsersService {
 
         if (!newUser) throw new Error("No se ha podido crear el usuario. Compruebe los datos.");
 
-        return await newUser.save();
+        return await newUser.save().select("-password");
     }
 }
 
