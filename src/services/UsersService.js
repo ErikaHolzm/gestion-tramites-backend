@@ -46,8 +46,6 @@ class UsersService {
 
         if (!user || !isValid) throw new Error("Credenciales inválidas");
 
-        console.log("Usuario logueado:", user);
-
         const { password, ...userWithoutPassword } = user.toObject();
         return userWithoutPassword;
     }
