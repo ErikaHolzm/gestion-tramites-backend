@@ -36,6 +36,34 @@ class UsersService {
 
         return deleted;
     }
+
+    async loginUser(loginData) {
+        const user = await Users.findOne({ email: loginData.email, password: loginData.password }).select("-password");
+
+        if (!user) throw new Error("Credenciales inválidas");
+
+        return user;
+    }
+
+    async registerUser(userData) {
+        // Verificar si el email o number ya está registrado
+        const existingUser = await Users.findOne({ 
+            $or: [
+                { email: userData.email },
+                { number: userData.number }
+            ] 
+        });
+
+        if (existingUser) {
+            throw new Error("El email o número ya está registrado");
+        }
+
+        const newUser = await Users.create(userData);
+
+        if (!newUser) throw new Error("No se ha podido crear el usuario. Compruebe los datos.");
+
+        return await newUser.save();
+    }
 }
 
 export default new UsersService();

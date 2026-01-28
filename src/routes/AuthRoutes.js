@@ -1,28 +1,11 @@
 import express from 'express';
 import AuthController from '../controllers/AuthController.js'
+import { validateAuthData, validateLoginData } from '../middlewares/AuthMiddlewares.js';
+
 const router = express.Router();
 
-router.post("/register", async (req, res) => {
-  try {
-    const newUser = await AuthController.registerUser(req.body);
-    res.json({ response: `Usuario creado con email: ${newUser.email}` });
-  } catch (error) {
-    console.error(
-      `No se ha podido crear el usuario con data: ${JSON.stringify(req.body)}`
-    );
-    res.status(409).json({ error: error.message });
-  }
-});
+router.post('/register', validateAuthData, AuthController.register);
 
+router.post('/login', validateLoginData, AuthController.login);
 
-router.post("/login", async (req, res) => {
-  try {
-    const user = await AuthController.loginUser(req.body);
-    res.json({ response: `Usuario logueado con email: ${user.email}` });
-  } catch (error) {
-    console.error(
-      `No se ha podido loguear el usuario con data: ${JSON.stringify(req.body)}`
-    );
-    res.status(409).json({ error: error.message });
-  }
-});
+export default router;
