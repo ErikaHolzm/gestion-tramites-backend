@@ -1,3 +1,5 @@
+import jwt from "jsonwebtoken";
+
 export default function auth(req, res, next) {
   const authHeader = req.headers.authorization;
 
@@ -52,4 +54,20 @@ export function validateLoginData(req, res, next) {
   }
 
   next();
+}
+
+// Middleware para verificar el token JWT
+export function verifyToken(req, res, next) {
+  // Comrobar el token en los headers en la etiqueta Authorization
+  const token = req.header('Authorization')?.split(' ')[1];
+  if (!token) return res.status(401).send('Acceso denegado. No hay token proporcionado.');
+
+  console.log("Token recibido:", token); 
+  try {
+    const verified = jwt.verify(token, process.env.JWT_SECRET);
+    req.user = verified;
+    next(); // Continuar con la solicitud
+  } catch (err) {
+    res.status(400).send('Token inválido');
+  }
 }
