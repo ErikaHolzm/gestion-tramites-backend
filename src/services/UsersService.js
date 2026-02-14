@@ -72,6 +72,11 @@ class UsersService {
 
         return await newUser.save().select("-password");
     }
+
+    async isAdmin(userId) {
+        const user = await Users.findById(userId);
+        return user.role === "admin";
+    }
 }
 
 export default new UsersService();

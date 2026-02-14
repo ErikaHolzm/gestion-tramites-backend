@@ -1,11 +1,12 @@
 import express from 'express';
 import UsersController from '../controllers/UsersController.js';
-import { validateUserCreation, validateUserUpdate, userExists } from '../middlewares/UsersMiddlewares.js';
+import { validateUserCreation, validateUserUpdate, userExists, userIsAdmin } from '../middlewares/UsersMiddlewares.js';
+import { verifyToken } from '../middlewares/AuthMiddlewares.js';
 
 const router = express.Router();
 
 // GET todos los usuarios
-router.get('/', UsersController.getAllUsers);
+router.get('/', verifyToken, userIsAdmin, UsersController.getAllUsers);
 
 // POST crear usuario
 router.post('/', validateUserCreation, UsersController.createNewUser);

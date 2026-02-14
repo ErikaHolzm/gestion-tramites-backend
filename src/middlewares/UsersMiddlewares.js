@@ -124,3 +124,20 @@ export async function userExists(req, res, next) {
         next(error);
     }
 }
+
+/**
+ * Verificar si el usuario es admin
+ */
+export async function userIsAdmin(req, res, next) {
+    try {
+        const isAdmin = await UsersService.isAdmin(req.user._id);
+        if (!isAdmin) {
+            return res.status(403).json({
+                message: "No tienes permiso para realizar esta acción"
+            });
+        }
+        next();
+    } catch (error) {
+        next(error);
+    }
+}
