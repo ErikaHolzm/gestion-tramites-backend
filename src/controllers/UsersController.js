@@ -13,23 +13,24 @@ class UsersController {
     }
 
     async getUserProfile(req, res) {
-        return res.status(200).json(req.user);
-    }
-
-    async createNewUser(req, res) {
         try {
-            const createdUser = await UsersService.createNewUser(req.body);
-            res.status(201).json(createdUser);
+            const userId = req.params.id || req.user.id;
+            const user = await UsersService.getUserById(userId);
+
+            if (!user) {
+                return res.status(404).json({ message: "Usuario no encontrado" });
+            }
+
+            return res.status(200).json(user);
         } catch (error) {
-            res.status(400).json({ error: error.message });
+            return res.status(500).json({ message: "Error al obtener el perfil" });
         }
-
     }
 
-    async updateUserById(req, res) {
+    async updateUserProfile(req, res) {
         try {
-            // El ID viene de params, los datos del body
-            const updatedUser = await UsersService.updateUserById(req.params.id, req.body);
+            const userId = req.params.id || req.user.id;
+            const updatedUser = await UsersService.updateUserById(userId, req.body);
             res.json({ message: 'Actualizado', user: updatedUser });
         } catch (error) {
             res.status(400).json({ error: error.message });

@@ -13,14 +13,6 @@ class UsersService {
         return await Users.findById(id).select("-password");
     }
   
-    async createNewUser(userData) {
-        const newUser = await Users.create(userData);
-
-        if (!newUser) throw Error("No se ha podido crear el User. Compruebe los datos.")
-
-        return await newUser.save();
-    }
-  
     async updateUserById(userId, updateData) {
         const user = await Users.findByIdAndUpdate(
             userId, 
