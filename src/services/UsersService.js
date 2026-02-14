@@ -1,6 +1,7 @@
 // Service Users
 import Users from '../models/Users.js';
 import bcrypt from 'bcrypt';
+import jwt from "jsonwebtoken";
 
 class UsersService {
 
@@ -46,8 +47,7 @@ class UsersService {
 
         if (!user || !isValid) throw new Error("Credenciales inválidas");
 
-        const { password, ...userWithoutPassword } = user.toObject();
-        return userWithoutPassword;
+        return jwt.sign({ id: user.id, email: user.email }, process.env.JWT_SECRET, { expiresIn: '1h' });
     }
 
     async registerUser(userData) {
