@@ -66,14 +66,19 @@ class UsersService {
             throw new Error("El email o número ya está registrado");
         }
 
-        const newUser = await Users.create(userData);
+        const userDoc = await Users.create(userData);
 
-        if (!newUser) throw new Error("No se ha podido crear el usuario. Compruebe los datos.");
+        if (!userDoc) throw new Error("No se ha podido crear el usuario.");
 
-        return await newUser.save().select("-password");
+        // Buscamos el ID recién creado excluyendo el password explícitamente
+        const newUser = await Users.findById(userDoc._id).select('-password');
+
+        return newUser;
     }
 
     async isAdmin(userId) {
+        if (!userId) return false;
+        
         const user = await Users.findById(userId);
         return user.role === "admin";
     }

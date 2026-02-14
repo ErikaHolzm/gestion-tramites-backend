@@ -130,7 +130,7 @@ export async function userExists(req, res, next) {
  */
 export async function userIsAdmin(req, res, next) {
     try {
-        const isAdmin = await UsersService.isAdmin(req.user._id);
+        const isAdmin = await UsersService.isAdmin(req.user.id);
         if (!isAdmin) {
             return res.status(403).json({
                 message: "No tienes permiso para realizar esta acción"
