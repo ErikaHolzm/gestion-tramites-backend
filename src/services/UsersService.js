@@ -70,7 +70,6 @@ class UsersService {
 
     async isAdmin(userId) {
         if (!userId) return false;
-        
         const user = await Users.findById(userId);
         return user.role === "admin";
     }

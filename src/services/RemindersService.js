@@ -1,5 +1,5 @@
 import Reminders from '../models/Reminders.js';
-
+import mongoose from 'mongoose';
 class RemindersService {
 
   async getAll() {
@@ -9,17 +9,25 @@ class RemindersService {
       .sort({ date: 1 });
   }
 
-  async getById(id) {
-    const reminder = await Reminders.findById(id)
+  async getMyReminders(userId) {
+    return await Reminders.find({ user: userId })
+      .populate("status")
+      .populate("user", "-password")
+      .sort({ date: 1 });
+  }
+
+  async getById(id, userId) {
+    const reminder = await Reminders.find({ _id: id, user: userId })
       .populate("status")
       .populate("user", "-password");
 
-    if (!reminder) throw new Error("Reminders no encontrado");
+    if (!reminder || reminder.length === 0) throw new Error("Reminders no encontrado");
+    
     return reminder;
   }
 
-  async createNewReminder(reminderData) {
-    const newReminder = await Reminders.create(reminderData);
+  async createNewReminder(reminderData, userId) {
+    const newReminder = await Reminders.create({ user: userId, ...reminderData });
 
     if (!newReminder) throw Error("No se ha podido crear el Recordatorio. Compruebe los datos.")
 
@@ -38,8 +46,8 @@ class RemindersService {
     return reminder;
   }
 
-  async deleteReminderById(reminderId) {
-    const deleted = await Reminders.deleteOne({ _id: reminderId });
+  async deleteReminderById(reminderId, userId) {
+    const deleted = await Reminders.deleteOne({ _id: reminderId, user: userId });
     
     if (!deleted) throw new Error("El Recordatorio no existe o ya fue eliminado");
     

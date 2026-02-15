@@ -26,10 +26,6 @@ export function validateRemindersCreation(req, res, next) {
         errors.push("El estado debe ser una cadena de texto con al menos 2 caracteres");
     }
 
-    if (!user || typeof user !== "string" || user.trim().length < 2) {
-        errors.push("El usuario debe ser una cadena de texto con al menos 2 caracteres");
-    }
-
     if (errors.length > 0) {
         return res.status(400).json({
             message: "Errores de validación",
@@ -69,14 +65,9 @@ export function validateReminderUpdate(req, res, next) {
         }
     }
 
-    if(!mongoose.Types.ObjectId.isValid(user)) {
-        errors.push("El user debe ser un object ID valido");
-    }
-
     if(!mongoose.Types.ObjectId.isValid(status)) {
         errors.push("El status debe ser un object ID valido");
     }
-
 
     if (errors.length > 0) {
         return res.status(400).json({
@@ -102,16 +93,22 @@ export async function reminderExists(req, res, next) {
             });
         }
 
-        const reminder = await RemindersService.getById(id);
+        try {
+            const reminder = await RemindersService.getById(id, req.user.id);
+            if (!reminder) {
+                return res.status(404).json({
+                    message: "Recordatorio no encontrado"
+                });
+            }
 
-        if (!reminder) {
+            // Pasar el usuario al siguiente middleware/controlador
+            req.reminder = reminder;
+        } catch (error) {
             return res.status(404).json({
                 message: "Recordatorio no encontrado"
             });
         }
 
-        // Pasar el usuario al siguiente middleware/controlador
-        req.reminder = reminder;
         next();
     } catch (error) {
         next(error);
