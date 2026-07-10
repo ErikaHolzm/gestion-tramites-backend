@@ -6,7 +6,7 @@ import { AppService } from './app.service';
 import { UsersModule } from './users/users.module';
 import { AuthModule } from './auth/auth.module';
 import { RemindersModule } from './reminders/reminders.module';
-
+import { Connection } from 'mongoose';
 @Module({
   imports: [
     ConfigModule.forRoot({
@@ -17,7 +17,8 @@ import { RemindersModule } from './reminders/reminders.module';
         const uri = process.env.MONGODB_URI;
         return {
           uri,
-          connectionFactory: (connection) => {
+          // usamos (connection: Connection) para que nos devuelva la conexion y podamos escuchar los eventos de conexion y error, porque sino seria de tipo any
+          connectionFactory: (connection: Connection) => {
             connection.on('connected', () => {
               console.log('Mongo conectado');
             });

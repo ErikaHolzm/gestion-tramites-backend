@@ -1,28 +1,35 @@
-import { IsEmail, IsEnum, IsNotEmpty, IsString, MinLength } from 'class-validator';
+import {
+  IsEmail,
+  //IsEnum,
+  IsNotEmpty,
+  IsString,
+  MinLength,
+} from 'class-validator';
 
 export class CreateUserDto {
   @IsString()
   @IsNotEmpty()
-  name: string;
+  name!: string;
 
   @IsString()
   @IsNotEmpty()
-  surname: string;
+  surname!: string;
 
   @IsEmail()
   @IsNotEmpty()
-  email: string;
+  email!: string;
 
   @IsString()
   @IsNotEmpty()
   @MinLength(6)
-  password: string;
+  password!: string;
 
   @IsString()
   @IsNotEmpty()
-  number: string;
+  number!: string;
 
-  @IsEnum(['user', 'admin'])
-  @IsNotEmpty()
-  role: string;
+  //@IsEnum(['user', 'admin'])
+  //@IsNotEmpty()
+  //role!: string;
+  // ⬆ comentado hasta que se implementen grupos con admin
 }
